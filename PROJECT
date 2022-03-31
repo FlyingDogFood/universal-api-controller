@@ -1,0 +1,6 @@
+domain: universal-api-controller.io
+layout:
+- go.kubebuilder.io/v3
+projectName: universal-api-controller
+repo: github.com/flyingdogfood/universal-api-controller
+version: "3"
