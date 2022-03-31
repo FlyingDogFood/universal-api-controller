@@ -1,0 +1,24 @@
+# permissions for end users to edit endpointtemplates.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: endpointtemplate-editor-role
+rules:
+- apiGroups:
+  - universal-api-controller.io.universal-api-controller.io
+  resources:
+  - endpointtemplates
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - universal-api-controller.io.universal-api-controller.io
+  resources:
+  - endpointtemplates/status
+  verbs:
+  - get
