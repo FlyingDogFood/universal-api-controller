@@ -17,26 +17,26 @@ limitations under the License.
 package v1alpha1
 
 import (
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+type ConfigTemplateRef struct {
+	// Defines the name of the ConfigTemplate
+	Name string `json:"name"`
+}
 
 // ConfigSpec defines the desired state of Config
 type ConfigSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Defines Params
+	Params []Param `json:"params,omitempty"`
 
-	// Foo is an example field of Config. Edit config_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Defines the used ConfigTemplate
+	Ref ConfigTemplateRef `json:"configTemplateRef"`
 }
 
 // ConfigStatus defines the observed state of Config
-type ConfigStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-}
+type ConfigStatus apiextensionsv1.JSON
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
