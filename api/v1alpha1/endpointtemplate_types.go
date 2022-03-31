@@ -20,34 +20,32 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // EndpointTemplateSpec defines the desired state of EndpointTemplate
 type EndpointTemplateSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	//Defines the parameters for the template
+	Params []ParamDefinition `json:"params,omitempty"`
 
-	// Foo is an example field of EndpointTemplate. Edit endpointtemplate_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
-}
+	// Defines the http method for this endpoint
+	Method string `json:"method"`
 
-// EndpointTemplateStatus defines the observed state of EndpointTemplate
-type EndpointTemplateStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Defines the url to call
+	URL string `json:"url"`
+
+	// Defines the http headers for the Request
+	Headers map[string]string `json:"headers,omitempty"`
+
+	// Defines the http body
+	Body string `json:"body,omitempty"`
 }
 
 //+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
 
 // EndpointTemplate is the Schema for the endpointtemplates API
 type EndpointTemplate struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   EndpointTemplateSpec   `json:"spec,omitempty"`
-	Status EndpointTemplateStatus `json:"status,omitempty"`
+	Spec EndpointTemplateSpec `json:"spec,omitempty"`
 }
 
 //+kubebuilder:object:root=true
