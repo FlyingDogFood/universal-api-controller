@@ -1,0 +1,20 @@
+# permissions for end users to view configtemplates.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: configtemplate-viewer-role
+rules:
+- apiGroups:
+  - universal-api-controller.io.universal-api-controller.io
+  resources:
+  - configtemplates
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - universal-api-controller.io.universal-api-controller.io
+  resources:
+  - configtemplates/status
+  verbs:
+  - get
