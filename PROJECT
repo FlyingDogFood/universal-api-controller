@@ -3,4 +3,14 @@ layout:
 - go.kubebuilder.io/v3
 projectName: universal-api-controller
 repo: github.com/flyingdogfood/universal-api-controller
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: universal-api-controller.io
+  group: universal-api-controller.io
+  kind: Config
+  path: github.com/flyingdogfood/universal-api-controller/api/v1alpha1
+  version: v1alpha1
 version: "3"
