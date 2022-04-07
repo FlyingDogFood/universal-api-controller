@@ -1,0 +1,76 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: null
+  name: endpointtemplates.universal-api-controller.io.universal-api-controller.io
+spec:
+  group: universal-api-controller.io.universal-api-controller.io
+  names:
+    kind: EndpointTemplate
+    listKind: EndpointTemplateList
+    plural: endpointtemplates
+    singular: endpointtemplate
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: EndpointTemplate is the Schema for the endpointtemplates API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: EndpointTemplateSpec defines the desired state of EndpointTemplate
+            properties:
+              body:
+                description: Defines the http body
+                type: string
+              headers:
+                additionalProperties:
+                  type: string
+                description: Defines the http headers for the Request
+                type: object
+              method:
+                description: Defines the http method for this endpoint
+                type: string
+              params:
+                description: Defines the parameters for the template
+                items:
+                  properties:
+                    description:
+                      type: string
+                    name:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+              url:
+                description: Defines the url to call
+                type: string
+            required:
+            - method
+            - url
+            type: object
+        type: object
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
