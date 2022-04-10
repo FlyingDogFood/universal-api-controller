@@ -39,9 +39,12 @@ type ConfigReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=universal-api-controller.io,resources=configs,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=universal-api-controller.io,resources=configs,verbs=get;
 //+kubebuilder:rbac:groups=universal-api-controller.io,resources=configs/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=universal-api-controller.io,resources=configs/finalizers,verbs=update
+//+kubebuilder:rbac:groups=universal-api-controller.io,resources=configTemplates,verbs=get;
+//+kubebuilder:rbac:groups=universal-api-controller.io,resources=functions,verbs=get;
+//+kubebuilder:rbac:groups=universal-api-controller.io,resources=endpointTemplates,verbs=get;
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
