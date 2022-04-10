@@ -20,34 +20,26 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // ConfigTemplateSpec defines the desired state of ConfigTemplate
 type ConfigTemplateSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Defines Parameters for ConfigTemplate
+	Params []ParamDefinition `json:"params,omitempty"`
 
-	// Foo is an example field of ConfigTemplate. Edit configtemplate_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
-}
+	// Defines Ref for reconciliation
+	Reconcile []FunctionOrEndpointTemplateRef `json:"reconcile"`
 
-// ConfigTemplateStatus defines the observed state of ConfigTemplate
-type ConfigTemplateStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// Defines Ref for deletion
+	Delete []FunctionOrEndpointTemplateRef `json:"delete"`
 }
 
 //+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
 
 // ConfigTemplate is the Schema for the configtemplates API
 type ConfigTemplate struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ConfigTemplateSpec   `json:"spec,omitempty"`
-	Status ConfigTemplateStatus `json:"status,omitempty"`
+	Spec ConfigTemplateSpec `json:"spec,omitempty"`
 }
 
 //+kubebuilder:object:root=true
