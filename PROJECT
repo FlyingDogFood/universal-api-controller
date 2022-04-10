@@ -12,4 +12,11 @@ resources:
   kind: Config
   path: github.com/flyingdogfood/universal-api-controller/api/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  domain: universal-api-controller.io
+  kind: ConfigTemplate
+  path: github.com/flyingdogfood/universal-api-controller/api/v1alpha1
+  version: v1alpha1
 version: "3"
