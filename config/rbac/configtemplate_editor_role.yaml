@@ -1,0 +1,24 @@
+# permissions for end users to edit configtemplates.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: configtemplate-editor-role
+rules:
+- apiGroups:
+  - universal-api-controller.io
+  resources:
+  - configtemplates
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - universal-api-controller.io
+  resources:
+  - configtemplates/status
+  verbs:
+  - get
