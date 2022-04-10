@@ -31,6 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	universalapicontrolleriov1alpha1 "github.com/flyingdogfood/universal-api-controller/api/v1alpha1"
+	util "github.com/flyingdogfood/universal-api-controller/util"
 )
 
 // ConfigReconciler reconciles a Config object
@@ -69,7 +70,7 @@ func (r *ConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	}
 
 	// Create Status with current Timestamp
-	status := newStatus()
+	status := util.NewStatus()
 
 	finalizerName := "universal-api-controller.io/finalizer"
 
@@ -106,8 +107,8 @@ func (r *ConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 		functionsOrEndpointTemplates = configTemplate.Spec.Reconcile
 	}
 
-	parameters := newParameters()
-	parameters, err = parameters.generateParameters(config.Spec.Params)
+	parameters := util.NewParameters()
+	parameters, err = parameters.GenerateParameters(config.Spec.Params)
 	if err != nil {
 		log.Error(err, "Failed to generate Parameters")
 		status["error"] = "Failed to generate Parameters"
@@ -155,7 +156,7 @@ func (r *ConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Context, functionsOrEndpointTemplates []universalapicontrolleriov1alpha1.FunctionOrEndpointTemplateRef, parameters Parameters, namespace string) (Parameters, Status, error) {
 	log := log.FromContext(ctx)
 
-	status := make(Status)
+	status := make(util.Status)
 
 	for _, functionOrEndpointTemplate := range functionsOrEndpointTemplates {
 		funcParameters, err := parameters.generateParameters(functionOrEndpointTemplate.Params)
@@ -173,7 +174,7 @@ func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Conte
 			}
 			resParameters, resStatus, err := r.executeFunctionsOrEndpointTemplates(ctx, function.Spec.Actions, funcParameters, namespace)
 			parameters.merge(resParameters, function.Name)
-			status.merge(resStatus, function.Name)
+			status.Merge(resStatus, function.Name)
 			if err != nil {
 				log.Error(err, "Failed to execute Function "+function.Name)
 				status["error"] = "Failed to execute Function " + function.Name
@@ -206,43 +207,43 @@ func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Conte
 
 func (r *ConfigReconciler) executeEndpointTemplate(ctx context.Context, endpointTemplate universalapicontrolleriov1alpha1.EndpointTemplate, parameters Parameters) (HttpResponse, Status, error) {
 	log := log.FromContext(ctx)
-	status := make(Status)
+	status := make(util.Status)
 	var err error
 
 	log.Info("executing EndpointTemplate: " + endpointTemplate.Name)
 
-	httpMethod, err := templateString(endpointTemplate.Spec.Method, parameters)
+	httpMethod, err := util.TemplateString(endpointTemplate.Spec.Method, parameters)
 	if err != nil {
 		log.Error(err, "Cannot template httpMethod")
 		status["error"] = "Cannot template httpMethod"
 		status["details"] = err
-		return HttpResponse{}, status, err
+		return util.HttpResponse{}, status, err
 	}
 
-	httpURL, err := templateString(endpointTemplate.Spec.URL, parameters)
+	httpURL, err := util.TemplateString(endpointTemplate.Spec.URL, parameters)
 	if err != nil {
 		log.Error(err, "Cannot template httpURL")
 		status["error"] = "Cannot template httpURL"
 		status["details"] = err
-		return HttpResponse{}, status, err
+		return util.HttpResponse{}, status, err
 	}
 
-	httpBody, err := templateString(endpointTemplate.Spec.Body, parameters)
+	httpBody, err := util.TemplateString(endpointTemplate.Spec.Body, parameters)
 	if err != nil {
 		log.Error(err, "Cannot template httpBody")
 		status["error"] = "Cannot template httpBody"
 		status["details"] = err
-		return HttpResponse{}, status, err
+		return util.HttpResponse{}, status, err
 	}
 
 	httpRequest, _ := http.NewRequest(httpMethod, httpURL, strings.NewReader(httpBody))
 
 	for key, value := range endpointTemplate.Spec.Headers {
-		httpHeaderValue, err := templateString(value, parameters)
+		httpHeaderValue, err := util.TemplateString(value, parameters)
 		if err != nil {
 			log.Error(err, "Cannot template Header: "+key)
 			status["error"] = "Cannot template Header" + key
-			return HttpResponse{}, status, err
+			return util.HttpResponse{}, status, err
 		}
 
 		httpRequest.Header.Add(key, httpHeaderValue)
@@ -254,9 +255,9 @@ func (r *ConfigReconciler) executeEndpointTemplate(ctx context.Context, endpoint
 		log.Error(err, "Failed doing HTTP Request")
 		status["error"] = "Failed doing HTTP Request"
 		status["details"] = err
-		return HttpResponse{}, status, err
+		return util.HttpResponse{}, status, err
 	}
-	response, err := fromHttpResponse(*httpResponse)
+	response, err := util.FromHttpResponse(*httpResponse)
 	if err != nil {
 		log.Error(err, "Failed phrasing HTTP Body")
 		status["error"] = "Failed phrasing HTTP Body"
@@ -277,9 +278,9 @@ func (r *ConfigReconciler) handleFinalizer(ctx context.Context, config universal
 	return true, nil
 }
 
-func (r *ConfigReconciler) updateStatus(ctx context.Context, config universalapicontrolleriov1alpha1.Config, status Status) error {
+func (r *ConfigReconciler) updateStatus(ctx context.Context, config universalapicontrolleriov1alpha1.Config, status util.Status) error {
 	var err error
-	config.Status.Raw, err = status.bytes()
+	config.Status.Raw, err = status.Bytes()
 	if err != nil {
 		return err
 	}

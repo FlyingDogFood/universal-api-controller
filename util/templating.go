@@ -5,7 +5,7 @@ import (
 	"html/template"
 )
 
-func templateString(templateString string, parameters Parameters) (string, error) {
+func TemplateString(templateString string, parameters Parameters) (string, error) {
 	templatevar, err := template.New("template").Parse(templateString)
 	if err != nil {
 		return "", err

@@ -8,16 +8,16 @@ import (
 
 type Status map[string]interface{}
 
-func newStatus() Status {
+func NewStatus() Status {
 	status := make(Status)
 	status["reconciledAt"] = metav1.Now()
 	return status
 }
 
-func (s *Status) bytes() ([]byte, error) {
+func (s *Status) Bytes() ([]byte, error) {
 	return json.Marshal(s)
 }
 
-func (s *Status) merge(status Status, name string) {
+func (s *Status) Merge(status Status, name string) {
 	(*s)[name] = status
 }

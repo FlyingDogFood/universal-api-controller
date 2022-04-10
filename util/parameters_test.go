@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewParameters(t *testing.T) {
-	parameters := newParameters()
+	parameters := NewParameters()
 	parameters2 := Parameters{
 		Parameters: make(map[string]string),
 		Responses:  make(map[string]interface{}),
@@ -44,7 +44,7 @@ func TestGenerateParameters(t *testing.T) {
 		},
 		Responses: make(map[string]interface{}),
 	}
-	generateResult, _ := parameters.generateParameters(params)
+	generateResult, _ := parameters.GenerateParameters(params)
 	if !cmp.Equal(expectedResult, generateResult) {
 		t.Errorf("Expected %v, got %v", expectedResult, generateResult)
 	}
@@ -92,7 +92,7 @@ func TestMerge(t *testing.T) {
 			},
 		},
 	}
-	parameters.merge(mergeParameters, "merge")
+	parameters.Merge(mergeParameters, "merge")
 	if !cmp.Equal(expectedParameters, parameters) {
 		t.Errorf("Expected %v, got %v", expectedParameters, parameters)
 	}

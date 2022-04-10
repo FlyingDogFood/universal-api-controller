@@ -20,7 +20,7 @@ type HttpResponse struct {
 	ContentLength int64 `json:"ContentLength"`
 }
 
-func fromHttpResponse(response http.Response) (HttpResponse, error) {
+func FromHttpResponse(response http.Response) (HttpResponse, error) {
 	httpResponse := HttpResponse{
 		Status:        response.Status,
 		StatusCode:    response.StatusCode,
