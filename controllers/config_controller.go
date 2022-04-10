@@ -153,13 +153,13 @@ func (r *ConfigReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	return ctrl.Result{RequeueAfter: requeueAfter}, nil
 }
 
-func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Context, functionsOrEndpointTemplates []universalapicontrolleriov1alpha1.FunctionOrEndpointTemplateRef, parameters Parameters, namespace string) (Parameters, Status, error) {
+func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Context, functionsOrEndpointTemplates []universalapicontrolleriov1alpha1.FunctionOrEndpointTemplateRef, parameters util.Parameters, namespace string) (util.Parameters, util.Status, error) {
 	log := log.FromContext(ctx)
 
 	status := make(util.Status)
 
 	for _, functionOrEndpointTemplate := range functionsOrEndpointTemplates {
-		funcParameters, err := parameters.generateParameters(functionOrEndpointTemplate.Params)
+		funcParameters, err := parameters.GenerateParameters(functionOrEndpointTemplate.Params)
 		if err != nil {
 			log.Error(err, "Could not generate Parameters for "+functionOrEndpointTemplate.Name)
 			status["error"] = "Could not generate Parameters for " + functionOrEndpointTemplate.Name
@@ -173,7 +173,7 @@ func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Conte
 				return parameters, status, err
 			}
 			resParameters, resStatus, err := r.executeFunctionsOrEndpointTemplates(ctx, function.Spec.Actions, funcParameters, namespace)
-			parameters.merge(resParameters, function.Name)
+			parameters.Merge(resParameters, function.Name)
 			status.Merge(resStatus, function.Name)
 			if err != nil {
 				log.Error(err, "Failed to execute Function "+function.Name)
@@ -189,7 +189,7 @@ func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Conte
 			}
 			httpResponse, status, err := r.executeEndpointTemplate(ctx, endpointTemplate, funcParameters)
 			parameters.Responses[functionOrEndpointTemplate.Name] = httpResponse
-			status.merge(status, functionOrEndpointTemplate.Name)
+			status.Merge(status, functionOrEndpointTemplate.Name)
 			if err != nil {
 				log.Error(err, "Failed to execute EndpointTemplate "+endpointTemplate.Name)
 				status["error"] = "Failed to execute EndpointTemplate " + endpointTemplate.Name
@@ -205,7 +205,7 @@ func (r *ConfigReconciler) executeFunctionsOrEndpointTemplates(ctx context.Conte
 	return parameters, status, nil
 }
 
-func (r *ConfigReconciler) executeEndpointTemplate(ctx context.Context, endpointTemplate universalapicontrolleriov1alpha1.EndpointTemplate, parameters Parameters) (HttpResponse, Status, error) {
+func (r *ConfigReconciler) executeEndpointTemplate(ctx context.Context, endpointTemplate universalapicontrolleriov1alpha1.EndpointTemplate, parameters util.Parameters) (util.HttpResponse, util.Status, error) {
 	log := log.FromContext(ctx)
 	status := make(util.Status)
 	var err error
