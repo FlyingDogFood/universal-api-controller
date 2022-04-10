@@ -1,0 +1,6 @@
+apiVersion: universal-api-controller.io.universal-api-controller.io/v1alpha1
+kind: EndpointTemplate
+metadata:
+  name: endpointtemplate-sample
+spec:
+  # TODO(user): Add fields here

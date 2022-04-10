@@ -1,0 +1,6 @@
+apiVersion: universal-api-controller.io.universal-api-controller.io/v1alpha1
+kind: Function
+metadata:
+  name: function-sample
+spec:
+  # TODO(user): Add fields here
