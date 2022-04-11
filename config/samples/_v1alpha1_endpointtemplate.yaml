@@ -3,4 +3,10 @@ kind: EndpointTemplate
 metadata:
   name: endpointtemplate-sample
 spec:
-  # TODO(user): Add fields here
+  params:
+    - name: host
+      description: Host to Configure(Can be Cluster intern or extern)
+    - name: port
+      description: Port of the API
+  method: GET
+  url: https://{{ .Parameters.host }}:{{ .Parameters.port }}/

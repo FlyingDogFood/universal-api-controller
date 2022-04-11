@@ -3,4 +3,10 @@ kind: Config
 metadata:
   name: config-sample
 spec:
-  # TODO(user): Add fields here
+  ref:
+    name: configtemplate-sample
+  params:
+    - name: host
+      value: localhost
+    - name: port
+      value: "8080"

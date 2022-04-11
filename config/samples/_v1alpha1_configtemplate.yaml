@@ -3,4 +3,28 @@ kind: ConfigTemplate
 metadata:
   name: configtemplate-sample
 spec:
-  # TODO(user): Add fields here
+  params:
+    - name: host
+      description: Host to Configure(Can be Cluster intern or extern)
+    - name: port
+      description: Port of the API
+  reconcile:
+    - name: create-update
+      ref:
+        name: function-sample
+        kind: Function
+      params:
+        - name: host
+          value: {{ .Parameters.host }}
+        - name: port
+          value: "{{ .Parameters.port }}"
+  delete:
+    - name: delete
+      ref:
+        name: endpointtemplate-sample
+        kind: EndpointTemplate
+      params:
+        - name: host
+          value: {{ .Parameters.host }}
+        - name: port
+          value: "{{ .Parameters.port }}"
