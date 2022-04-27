@@ -17,7 +17,7 @@ import (
 var _ = Describe("Config controller", func() {
 
 	var config universalapicontrolleriov1alpha1.Config
-	//var configTemplate universalapicontrolleriov1alpha1.ConfigTemplate
+	var configTemplate universalapicontrolleriov1alpha1.ConfigTemplate
 	//var endpointTemplate universalapicontrolleriov1alpha1.EndpointTemplate
 
 	config = universalapicontrolleriov1alpha1.Config{
@@ -41,18 +41,18 @@ var _ = Describe("Config controller", func() {
 				},
 			},
 			Ref: universalapicontrolleriov1alpha1.ConfigTemplateRef{
-				Name: "test-configTemplate",
+				Name: "test-configtemplate",
 			},
 		},
 	}
 
-	/*configTemplate = universalapicontrolleriov1alpha1.ConfigTemplate{
+	configTemplate = universalapicontrolleriov1alpha1.ConfigTemplate{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "universal-api-controller.io/v1alpha1",
 			Kind:       "ConfigTemplate",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "test-configTemplate",
+			Name:      "test-configtemplate",
 			Namespace: "default",
 		},
 		Spec: universalapicontrolleriov1alpha1.ConfigTemplateSpec{
@@ -68,7 +68,7 @@ var _ = Describe("Config controller", func() {
 				universalapicontrolleriov1alpha1.FunctionOrEndpointTemplateRef{
 					Name: "test-configTemplate",
 					Ref: universalapicontrolleriov1alpha1.ObjectRef{
-						Name: "test-endpointTemplate",
+						Name: "test-endpointtemplate",
 						Type: "EndpointTemplate",
 					},
 					Params: []universalapicontrolleriov1alpha1.Param{
@@ -87,7 +87,7 @@ var _ = Describe("Config controller", func() {
 				universalapicontrolleriov1alpha1.FunctionOrEndpointTemplateRef{
 					Name: "test-configTemplate",
 					Ref: universalapicontrolleriov1alpha1.ObjectRef{
-						Name: "test-endpointTemplate",
+						Name: "test-endpointtemplate",
 						Type: "EndpointTemplate",
 					},
 					Params: []universalapicontrolleriov1alpha1.Param{
@@ -105,13 +105,13 @@ var _ = Describe("Config controller", func() {
 		},
 	}
 
-	endpointTemplate = universalapicontrolleriov1alpha1.EndpointTemplate{
+	/*endpointTemplate = universalapicontrolleriov1alpha1.EndpointTemplate{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "universal-api-controller.io/v1alpha1",
 			Kind:       "EndpointTemplate",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "test-endpointTemplate",
+			Name:      "test-endpointtemplate",
 			Namespace: "default",
 		},
 		Spec: universalapicontrolleriov1alpha1.EndpointTemplateSpec{
@@ -130,7 +130,7 @@ var _ = Describe("Config controller", func() {
 
 	Context("When creating Config", func() {
 		It("Should create error status as ConfigTemplate is missing", func() {
-			By("Creating Congig")
+			By("Creating Config")
 			ctx := context.Background()
 			Expect(k8sClient.Create(ctx, &config)).Should(Succeed())
 			By("Getting the created Config")
@@ -161,7 +161,43 @@ var _ = Describe("Config controller", func() {
 					}
 				}
 				return ""
-			}, time.Second*10, time.Microsecond*100).Should(BeEquivalentTo("Could not find ConfigTemplate: test-configTemplate"))
+			}, time.Second*10, time.Microsecond*100).Should(BeEquivalentTo("Could not find ConfigTemplate: test-configtemplate"))
+		})
+		Context("When creating ConfigTemplate", func() {
+			It("Should create error status as EndpointTemplate is missing", func() {
+				By("Creating ConfigTemplate")
+				ctx := context.Background()
+				Expect(k8sClient.Create(ctx, &configTemplate)).Should(Succeed())
+				By("Getting the created ConfigTemplate")
+				Eventually(func() bool {
+					createdConfigTemplate := universalapicontrolleriov1alpha1.ConfigTemplate{}
+					err := k8sClient.Get(ctx, types.NamespacedName{Namespace: "default", Name: "test-configtemplate"}, &createdConfigTemplate)
+					if err != nil {
+						return false
+					}
+					return true
+				}, time.Second*10, time.Microsecond*100).Should(BeTrue())
+				By("Checking Config Status")
+				Eventually(func() string {
+					createdConfig := universalapicontrolleriov1alpha1.Config{}
+					err := k8sClient.Get(ctx, types.NamespacedName{Namespace: "default", Name: "test-config"}, &createdConfig)
+					if err != nil {
+						return ""
+					}
+					var status apiextensions.JSON
+					input := apiextensionsv1.JSON(createdConfig.Status)
+					var scope conversion.Scope
+					apiextensionsv1.Convert_v1_JSON_To_apiextensions_JSON(&input, &status, scope)
+					switch mystatus := status.(type) {
+					case map[string]interface{}:
+						switch err := mystatus["error"].(type) {
+						case string:
+							return err
+						}
+					}
+					return ""
+				}, time.Second*10, time.Microsecond*100).Should(BeEquivalentTo("Could not find EndpointTemplate: test-endpointtemplate"))
+			})
 		})
 	})
 })
