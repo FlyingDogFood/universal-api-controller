@@ -4,3 +4,8 @@ image:
 vscode:
   extensions:
     - golang.go
+
+tasks:
+  - name: setEnv
+    env:
+      KUBEBUILDER_ASSETS: "/home/gitpod/.local/share/kubebuilder-envtest/k8s/1.23.3-linux-amd64"
